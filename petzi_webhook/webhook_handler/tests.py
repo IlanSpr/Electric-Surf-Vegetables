@@ -51,3 +51,4 @@ class PetziWebhookTestCase(TestCase):
 
         response = self.client.post('/petzi_webhook/', data=payload, content_type='application/json', **headers)
         self.assertEqual(response.status_code, 200)
+        print(response.content)
