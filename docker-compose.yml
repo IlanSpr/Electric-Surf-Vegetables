@@ -11,7 +11,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
-      - kafka
+      - rabbitmq
 
   db:
     image: postgres:latest
@@ -22,25 +22,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  zookeeper:
-    image: wurstmeister/zookeeper:latest
-    container_name: zookeeper
+  rabbitmq:
+    image: rabbitmq:3-management
     ports:
-      - "2181:2181"
-
-  kafka:
-    image: wurstmeister/kafka:latest
-    container_name: kafka
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_CREATE_TOPICS: "your_topic:1:1"
-    depends_on:
-      - zookeeper
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-
+      - "5672:5672"
 volumes:
   postgres_data:

@@ -1,8 +1,6 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from .kafka import setup_kafka
-
 from . import app_db
 from .models import db
 from .app_logging import setup_logging
@@ -19,6 +17,5 @@ def create_app():
 
     setup_logging(app)
     init_app_routes(app)
-    setup_kafka(app)
 
     return app

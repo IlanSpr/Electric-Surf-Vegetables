@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from .validation import is_request_valid
 from .app_db import process_data
-from .kafka import send_message
+from .rabbitmq import send_message
 
 def init_app_routes(app):
     @app.route('/webhook', methods=['POST'])
@@ -15,7 +15,7 @@ def init_app_routes(app):
         try:
             send_message('petzi', data)
         except Exception as e:
-            print(e)
+            app.logger.error(e)
             return jsonify({'error': 'Error sending message'}), 500
 
         return jsonify({'status': 'success'}), 200
