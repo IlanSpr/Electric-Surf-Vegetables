@@ -10,18 +10,6 @@ import datetime
 import hmac
 
 import requests
-# Description: This script simulates a petzi webhook request.
-#   ____                    _       ____ _
-#  / ___|__ _ ___  ___     / \     / ___| |__   ___   ___ ___
-# | |   / _` / __|/ _ \   / _ \   | |   | '_ \ / _ \ / __/ __|
-# | |__| (_| \__ \  __/  / ___ \  | |___| | | | (_) | (__\__ \
-#  \____\__,_|___/\___| /_/   \_\  \____|_| |_|\___/ \___|___/
-
-import argparse
-import datetime
-import hmac
-
-import requests
 
 
 def make_header(body, secret):
