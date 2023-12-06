@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
-from . import app_db
+from . import app_db, rabbitmq
 from .models import db
 from .app_logging import setup_logging
 from .routes import init_app_routes
@@ -17,5 +17,7 @@ def create_app():
 
     setup_logging(app)
     init_app_routes(app)
+
+
 
     return app
