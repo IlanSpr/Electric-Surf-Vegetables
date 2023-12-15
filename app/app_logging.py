@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
+
 def setup_logging(app):
     file_handler = RotatingFileHandler('flask_app.log', maxBytes=1000000, backupCount=10)
     file_handler.setLevel(logging.INFO)

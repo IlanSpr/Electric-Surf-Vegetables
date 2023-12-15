@@ -3,6 +3,7 @@ import hashlib
 import hmac
 import os
 
+
 def is_request_valid(req):
     secret = os.getenv('SECRET_KEY').encode()
 

@@ -3,6 +3,7 @@ import json
 
 db = SQLAlchemy()
 
+
 class WebhookEvent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.Text, nullable=False)

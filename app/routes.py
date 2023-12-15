@@ -3,6 +3,7 @@ from .validation import is_request_valid
 from .app_db import process_data
 from .rabbitmq import send_message
 
+
 def init_app_routes(app):
     @app.route('/webhook', methods=['POST'])
     def webhook():
@@ -19,4 +20,3 @@ def init_app_routes(app):
             return jsonify({'error': 'Error sending message'}), 500
 
         return jsonify({'status': 'success'}), 200
-
