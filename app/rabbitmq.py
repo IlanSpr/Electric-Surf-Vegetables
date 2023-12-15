@@ -18,9 +18,7 @@ def send_message(queue, message_data):
         formatted_message = 'ticket sold event'
     elif event_type == 'ticket_updated':
         formatted_message = 'ticket updated event'
-    # Add more conditions as needed for other event types
 
-    # Send the formatted message
     channel.basic_publish(exchange='', routing_key=queue, body=json.dumps(formatted_message))
     print(f" [x] Sent '{formatted_message}' to {queue}")
 
@@ -45,5 +43,3 @@ def receive_message(queue, callback, max_retries=5, retry_delay=5):
 
     if attempt == max_retries:
         print("Failed to connect to RabbitMQ after several attempts.")
-
-

@@ -8,7 +8,7 @@ def init_app_routes(app):
     @app.route('/webhook', methods=['POST'])
     def webhook():
         if not is_request_valid(request):
-            return jsonify({'error': 'Invalid request'}), 403
+            return jsonify({'error': 'Invalid request'}), 200
 
         data = request.get_json()
         process_data(app, data)
@@ -17,6 +17,6 @@ def init_app_routes(app):
             send_message('petzi', data)
         except Exception as e:
             app.logger.error(e)
-            return jsonify({'error': 'Error sending message'}), 500
+            return jsonify({'error': 'Error sending message'}), 200
 
         return jsonify({'status': 'success'}), 200
