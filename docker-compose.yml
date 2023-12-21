@@ -19,7 +19,9 @@ services:
       - "15672:15672"
 
   webhook:
-    build: .
+    build:
+        context: .
+        dockerfile: petzi-app/dockerfile
     container_name: webhook
     ports:
       - "5000:5000"
