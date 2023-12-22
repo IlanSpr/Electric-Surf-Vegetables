@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+        - petzi-network
 
   rabbitmq:
     container_name: rabbitmq
@@ -17,11 +19,13 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+        - petzi-network
 
   webhook:
     build:
-        context: .
-        dockerfile: petzi-app/dockerfile
+        context: ./petzi-app
+        dockerfile: dockerfile
     container_name: webhook
     ports:
       - "5000:5000"
@@ -31,8 +35,25 @@ services:
     depends_on:
       - db
       - rabbitmq
+    networks:
+      - petzi-network
+
+
+  view:
+    build:
+      context: ./petzi-view
+      dockerfile: dockerfile
+    container_name: view
+    ports:
+      - "8080:80"
+    networks:
+        - petzi-network
 
 volumes:
   postgres_data:
+
+networks:
+    petzi-network:
+        driver: bridge
 
 

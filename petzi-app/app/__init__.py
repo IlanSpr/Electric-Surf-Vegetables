@@ -1,6 +1,8 @@
 import os
 from flask import Flask
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 from . import app_db, rabbitmq
 from .models import db
 from .app_logging import setup_logging
@@ -10,6 +12,7 @@ from .web_socket import create_socketio_app
 
 def create_app():
     app = Flask(__name__)
+    CORS(app)
     load_dotenv()
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
