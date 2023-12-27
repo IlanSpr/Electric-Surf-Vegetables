@@ -21,20 +21,20 @@
       </div>
       <table class="tickets-table">
         <thead>
-          <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Category</th>
-            <th>Refund Reason</th>
-          </tr>
+        <tr>
+          <th>Title</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Refund Reason</th>
+        </tr>
         </thead>
         <tbody>
-          <tr v-for="ticket in tickets" :key="ticket.number">
-            <td>{{ ticket.title }}</td>
-            <td>{{ ticket.type }}</td>
-            <td>{{ ticket.category }}</td>
-            <td>{{ ticket.cancellationReason || 'N/A' }}</td>
-          </tr>
+        <tr v-for="ticket in tickets" :key="ticket.number">
+          <td>{{ ticket.title }}</td>
+          <td>{{ ticket.type }}</td>
+          <td>{{ ticket.category }}</td>
+          <td>{{ ticket.cancellationReason || 'N/A' }}</td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -42,28 +42,52 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-import { state } from '../socket.js';
+import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
 
 export default {
   name: "BusinessView",
 
-  computed: {
-    tickets() {
-      return state.tickets;
-    },
-    refundRate() {
-      const refundCount = this.tickets.filter(ticket => ticket.cancellationReason).length;
-      return ((refundCount / this.tickets.length) * 100).toFixed(2);
-    },
-    canceledEvents() {
-      return this.tickets.filter(ticket => ticket.cancellationReason === 'event_cancellation').length;
-    },
-    averagePrice() {
-      const totalAmount = this.tickets.reduce((sum, ticket) => sum + parseFloat(ticket.price.amount), 0);
-      return (totalAmount / this.tickets.length).toFixed(2);
-    },
-  },
+  setup() {
+    const tickets = ref([]);
+
+    const initializeSSE = () => {
+      const evtSource = new EventSource("http://webhook:5000/events");
+
+      evtSource.onmessage = (e) => {
+        const newTicket = JSON.parse(e.data);
+        tickets.value.push(newTicket);
+      };
+
+      onBeforeUnmount(() => {
+        if (evtSource) {
+          evtSource.close();
+        }
+      });
+    };
+
+    onMounted(initializeSSE);
+
+    const refundRate = computed(() => {
+      const refundCount = tickets.value.filter(ticket => ticket.cancellationReason).length;
+      return ((refundCount / tickets.value.length) * 100).toFixed(2);
+    });
+
+    const canceledEvents = computed(() => {
+      return tickets.value.filter(ticket => ticket.cancellationReason === 'event_cancellation').length;
+    });
+
+    const averagePrice = computed(() => {
+      const totalAmount = tickets.value.reduce((sum, ticket) => sum + parseFloat(ticket.price.amount), 0);
+      return (totalAmount / tickets.value.length).toFixed(2);
+    });
+
+    return {
+      tickets,
+      refundRate,
+      canceledEvents,
+      averagePrice
+    };
+  }
 };
 </script>
 

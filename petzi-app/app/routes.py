@@ -17,10 +17,8 @@ def init_app_routes(app):
             app.logger.error(f"Error in parsing request data: {e}")
             return jsonify({'error': 'Invalid JSON data'}), 200
 
-        # Process the data and store in DB (if needed)
         process_data(app, data)
 
-        # Send the data to RabbitMQ
         try:
             sending_message(data)
             app.logger.info("Message successfully sent to RabbitMQ.")
