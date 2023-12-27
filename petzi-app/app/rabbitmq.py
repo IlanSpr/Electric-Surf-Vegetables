@@ -6,11 +6,9 @@ def sending_message(data):
     connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
     channel = connection.channel()
 
-    # Ensure the queue exists
     channel.queue_declare(queue='petzi')
 
-    # Determine the message based on the event type
-    event_type = data.get('event')
+    '''event_type = data.get('event')
     details = data.get('details', {})
 
     if event_type == 'ticket_created':
@@ -20,8 +18,8 @@ def sending_message(data):
         message = f"Ticket Updated: Reason - {cancellation_reason}, Details: {json.dumps(details)}"
     else:
         message = f"Unknown Event: {json.dumps(data)}"
+    '''
 
-    # Send the message to the queue
     channel.basic_publish(exchange='', routing_key='petzi', body=message)
     print(f" [x] Sent message to 'petzi' queue: {message}")
 

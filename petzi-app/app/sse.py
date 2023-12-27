@@ -19,7 +19,4 @@ def stream_messages():
         channel.stop_consuming()
         connection.close()
 
-@app.route('/events')
-def sse():
-    return Response(stream_with_context(stream_messages()), content_type='text/event-stream')
 

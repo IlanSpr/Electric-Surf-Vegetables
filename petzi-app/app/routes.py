@@ -1,13 +1,14 @@
-from flask import request, jsonify
+from flask import request, jsonify, Response, stream_with_context
 from .validation import is_request_valid
 from .app_db import process_data
 from .rabbitmq import sending_message
+from .sse import stream_messages
 
 
 def init_app_routes(app):
     @app.route('/webhook', methods=['POST'])
     def webhook():
-        # Check if the request is valid first
+
         if not is_request_valid(request):
             return jsonify({'error': 'Invalid request'}), 200
 
@@ -27,3 +28,8 @@ def init_app_routes(app):
             return jsonify({'error': 'Error sending message to RabbitMQ'}), 200
 
         return jsonify({'status': 'success'}), 200
+
+    @app.route('/events')
+    def sse():
+        return Response(stream_with_context(stream_messages()), content_type='text/event-stream')
+

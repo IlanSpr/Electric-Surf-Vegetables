@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from dotenv import load_dotenv
 from flask_cors import CORS
-from .sse import sse
 from . import app_db, rabbitmq
 from .models import db
 from .routes import init_app_routes
@@ -18,7 +17,5 @@ def create_app():
     db.init_app(app)
     app_db.init_db(app)
     init_app_routes(app)
-
-    app.add_url_rule('/events', 'sse', sse)
 
     return app
