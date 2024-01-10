@@ -55,13 +55,18 @@ For local development:
 ### Testing
 The `petzi_simulator.py` script is available for testing the webhook functionality.
 
+```
+python petzi_simulator.py http://localhost:5000/webhook mySecret
+```
+
+
 ### Database Verification
 To access and verify data in the PostgreSQL database:
 
 ```
 docker exec -it postgres_db bash
 psql -U postgres
-SELECT * FROM webhook;
+SELECT * FROM webhook_event;
 ```
 
 ### SSE Endpoint
