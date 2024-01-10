@@ -5,20 +5,6 @@
       <p>No ticket data available yet.</p>
     </div>
     <div v-else>
-      <div class="statistics">
-        <div class="stat">
-          <p>Total Tickets: {{ tickets.length }}</p>
-        </div>
-        <div class="stat">
-          <p>Refund Rate: {{ refundRate }}%</p>
-        </div>
-        <div class="stat">
-          <p>Canceled Events: {{ canceledEvents }}</p>
-        </div>
-        <div class="stat">
-          <p>Average Price: ${{ averagePrice }}</p>
-        </div>
-      </div>
       <table class="tickets-table">
         <thead>
           <tr>
@@ -29,7 +15,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="ticketInfo in tickets" :key="ticketInfo.ticket.number">
+          <tr v-for="ticketInfo in tickets" :key="ticketInfo.number">
             <td>{{ ticketInfo.ticket.title }}</td>
             <td>{{ ticketInfo.ticket.type }}</td>
             <td>{{ ticketInfo.ticket.category }}</td>
@@ -43,6 +29,7 @@
 
 <script>
 import { computed, onMounted, onBeforeUnmount, ref } from 'vue';
+import axios from 'axios';
 
 export default {
   name: "BusinessView",
@@ -50,10 +37,41 @@ export default {
   setup() {
     const tickets = ref([]);
 
+    const fetchStoredMessages = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/get-messages');
+        console.log('Response data:', response.data);
+
+        if (Array.isArray(response.data)) {
+          response.data.forEach(ticket => {
+            // Wrap the ticket object in an object with a `ticket` property
+            const normalizedTicket = {
+              ticket: {
+                ...ticket,
+                title: ticket.title,
+                type: ticket.type,
+                category: ticket.category,
+                cancellationReason: ticket.cancellationReason || 'N/A'
+              }
+            };
+            tickets.value.push(normalizedTicket);
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching stored messages:', error);
+      }
+    };
+
+
+    onMounted(async () => {
+      await fetchStoredMessages();
+      initializeSSE();
+    });
+
     const initializeSSE = () => {
       const evtSource = new EventSource("http://localhost:8080/events");
 
-      evtSource.onmessage = (e) => {
+      evtSource.onmessage = async (e) => {
         const receivedData = JSON.parse(e.data);
         console.log('Parsed data:', receivedData);
 
@@ -79,7 +97,7 @@ export default {
 
     const refundRate = computed(() => {
       const refundCount = tickets.value.filter(ticket => ticket.cancellationReason).length;
-      return ((refundCount / tickets.value.length) * 100).toFixed(2);
+      return tickets.value.length > 0 ? ((refundCount / tickets.value.length) * 100).toFixed(2) : '0.00';
     });
 
     const canceledEvents = computed(() => {
@@ -87,11 +105,18 @@ export default {
     });
 
     const averagePrice = computed(() => {
-      const totalAmount = tickets.value.reduce((sum, ticketInfo) => {
-        return sum + (ticketInfo.price ? parseFloat(ticketInfo.price.amount) : 0);
-      }, 0);
-      return tickets.value.length > 0 ? (totalAmount / tickets.value.length).toFixed(2) : '0.00';
+      let totalAmount = 0;
+      let count = 0;
+
+      tickets.value.forEach(ticket => {
+        if (ticket.price && ticket.price.amount) {
+          totalAmount += parseFloat(ticket.price.amount);
+          count += 1;
+        }
+      });
+      return count > 0 ? (totalAmount / count).toFixed(2) : '0.00';
     });
+
 
     return {
       tickets,
@@ -100,7 +125,7 @@ export default {
       averagePrice
     };
   }
-};
+}
 </script>
 
 
