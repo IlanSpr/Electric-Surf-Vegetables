@@ -1,14 +1,15 @@
 # Electric-Surf-Vegetables
 
+## Introduction
+Electric-Surf-Vegetables is an innovative Flask-based web application designed for real-time webhook handling and data visualization. It streamlines the process of tracking and analyzing webhook data such as ticket sales, making it ideal for live event management and similar applications.
+
 ## Overview
-Electric-Surf-Vegetables is a Flask-based project designed for webhook handling with integrations to PostgreSQL for data persistence and RabbitMQ for message queuing. The project is optimized for minimal hardware resource usage and is containerized using Docker for ease of deployment.
+This application integrates PostgreSQL for robust data storage, RabbitMQ for efficient message queuing, and a Vue.js frontend to present a dynamic business intelligence dashboard. It's optimized for deployment in varied environments, courtesy of Docker containerization.
 
-## Getting Started
-
-### Prerequisites
-- Docker
-- Python 3.8+
-- Docker Compose
+## Features
+- **Real-Time Data Visualization**: The Vue.js frontend dynamically updates the business intelligence dashboard with each webhook event.
+- **Scalable Architecture**: Using Flask, PostgreSQL, and RabbitMQ, the system is designed for high efficiency and scalability.
+- **Docker Containerization**: Ensures seamless deployment and consistency across different environments.
 
 ### Installation
 Clone the repository and set up the project:
