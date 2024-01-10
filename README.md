@@ -1,54 +1,77 @@
 # Electric-Surf-Vegetables
 
 ## Overview
-This Flask-based project handles webhook requests, integrates with a PostgreSQL database, and uses RabbitMQ for message queuing. It's designed for minimal hardware resource usage and is containerized using Docker.
+Electric-Surf-Vegetables is a Flask-based project designed for webhook handling with integrations to PostgreSQL for data persistence and RabbitMQ for message queuing. The project is optimized for minimal hardware resource usage and is containerized using Docker for ease of deployment.
 
 ## Getting Started
+
 ### Prerequisites
 - Docker
 - Python 3.8+
 - Docker Compose
 
 ### Installation
-Clone and set up the project:
+Clone the repository and set up the project:
 
-    git clone https://github.com/IlanSpr/Electric-Surf-Vegetables/
-    cd Electric-Surf-Vegetables
-    docker-compose up --build
+```
+git clone https://github.com/IlanSpr/Electric-Surf-Vegetables/
+cd Electric-Surf-Vegetables
+docker-compose up --build
+```
 
 ### Usage
+
 #### Webhook Server
-Access `http://localhost:5000/webhook`. Receives and processes POST requests.
+Access the webhook server at `http://localhost:5000/webhook`. It receives and processes POST requests, storing data in PostgreSQL and sending messages to RabbitMQ.
+
+#### Vue.js Frontend
+Access the frontend at `http://localhost:8080`. It displays a real-time business intelligence dashboard, updating with each webhook event.
 
 #### Simulator Script
-Test the webhook:
+To test the webhook functionality:
 
-    python3 petzi_simulator.py http://localhost:5000/webhook mySecretKey
-
+```
+python3 petzi_simulator.py http://localhost:5000/webhook mySecretKey
+```
 
 #### RabbitMQ Management Interface
-Access at `http://localhost:15672` (default login: guest/guest).
+Access the management interface at `http://localhost:15672` (default credentials: guest/guest). This interface allows you to monitor queues and messages.
 
 ### Development
-Run locally:
-1. Install dependencies: `pip install -r requirements.txt`
-2. Start the application: `python3 petzi_webhook.py`
+For local development:
+
+1. Install dependencies:
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+2. Start the application:
+
+   ```
+   python3 petzi_webhook.py
+   ```
 
 ### Testing
-Use `petzi_simulator.py` to test webhook functionality.
+The `petzi_simulator.py` script is available for testing the webhook functionality.
 
 ### Database Verification
-Access and verify PostgreSQL data:
-    
-    docker exec -it postgres_db bash
-    psql -U postgres
-    SELECT * FROM webhook;
+To access and verify data in the PostgreSQL database:
+
+```
+docker exec -it postgres_db bash
+psql -U postgres
+SELECT * FROM webhook;
+```
+
+### SSE Endpoint
+Stream messages from RabbitMQ in real-time through Server-Sent Events (SSE) at the endpoint `http://localhost:5000/events`.
 
 ### Deployment
-Containerized with Docker for easy deployment.
+The project is fully containerized using Docker, making deployment straightforward and consistent across different environments.
 
 ### .env-example
-Rename to `.env` and update with your settings.
+Rename `.env-example` to `.env` and update it with your environment-specific settings.
 
 ## FOSS and Resource Efficiency
-Utilizes FOSS tools optimized for limited hardware resources: Flask, PostgreSQL, RabbitMQ, Docker.
+The project leverages Free and Open Source Software (FOSS) tools, optimized for limited hardware resources, including Flask, PostgreSQL, RabbitMQ, and Docker.
