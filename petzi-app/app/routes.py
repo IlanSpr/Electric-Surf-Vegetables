@@ -31,5 +31,8 @@ def init_app_routes(app):
 
     @app.route('/events')
     def sse():
-        return Response(stream_with_context(stream_messages()), content_type='text/event-stream')
-
+        try:
+            return Response(stream_with_context(stream_messages()), content_type='text/event-stream')
+        except Exception as e:
+            app.logger.error(f"Error in streaming messages: {e}")
+            return jsonify({'error': 'Error streaming messages'}), 500

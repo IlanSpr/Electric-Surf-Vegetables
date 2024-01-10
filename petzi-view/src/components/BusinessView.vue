@@ -21,20 +21,20 @@
       </div>
       <table class="tickets-table">
         <thead>
-        <tr>
-          <th>Title</th>
-          <th>Type</th>
-          <th>Category</th>
-          <th>Refund Reason</th>
-        </tr>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Category</th>
+            <th>Refund Reason</th>
+          </tr>
         </thead>
         <tbody>
-        <tr v-for="ticket in tickets" :key="ticket.number">
-          <td>{{ ticket.title }}</td>
-          <td>{{ ticket.type }}</td>
-          <td>{{ ticket.category }}</td>
-          <td>{{ ticket.cancellationReason || 'N/A' }}</td>
-        </tr>
+          <tr v-for="ticketInfo in tickets" :key="ticketInfo.ticket.number">
+            <td>{{ ticketInfo.ticket.title }}</td>
+            <td>{{ ticketInfo.ticket.type }}</td>
+            <td>{{ ticketInfo.ticket.category }}</td>
+            <td>{{ ticketInfo.ticket.cancellationReason || 'N/A' }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -51,11 +51,21 @@ export default {
     const tickets = ref([]);
 
     const initializeSSE = () => {
-      const evtSource = new EventSource("http://webhook:5000/events");
+      const evtSource = new EventSource("http://localhost:8080/events");
 
       evtSource.onmessage = (e) => {
-        const newTicket = JSON.parse(e.data);
-        tickets.value.push(newTicket);
+        const receivedData = JSON.parse(e.data);
+        console.log('Parsed data:', receivedData);
+
+        if (receivedData.message) {
+          try {
+            const jsonPart = receivedData.message.replace('Ticket Created: ', '');
+            const ticketData = JSON.parse(jsonPart);
+            tickets.value.push(ticketData);
+          } catch (err) {
+            console.error('Error parsing ticket data:', err);
+          }
+        }
       };
 
       onBeforeUnmount(() => {
@@ -77,8 +87,10 @@ export default {
     });
 
     const averagePrice = computed(() => {
-      const totalAmount = tickets.value.reduce((sum, ticket) => sum + parseFloat(ticket.price.amount), 0);
-      return (totalAmount / tickets.value.length).toFixed(2);
+      const totalAmount = tickets.value.reduce((sum, ticketInfo) => {
+        return sum + (ticketInfo.price ? parseFloat(ticketInfo.price.amount) : 0);
+      }, 0);
+      return tickets.value.length > 0 ? (totalAmount / tickets.value.length).toFixed(2) : '0.00';
     });
 
     return {
@@ -90,6 +102,7 @@ export default {
   }
 };
 </script>
+
 
 <style scoped>
 .dashboard {
@@ -130,7 +143,15 @@ h1 {
   color: #333;
 }
 
-.tickets-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+
+.tickets-table tr:nth-child(odd) {
+  background-color: #333;
+  color: #fff;
 }
+
+.tickets-table tr:nth-child(even) {
+  background-color: #fff;
+  color: #333;
+}
+
 </style>

@@ -8,7 +8,7 @@ def sending_message(data):
 
     channel.queue_declare(queue='petzi')
 
-    '''event_type = data.get('event')
+    event_type = data.get('event')
     details = data.get('details', {})
 
     if event_type == 'ticket_created':
@@ -18,7 +18,6 @@ def sending_message(data):
         message = f"Ticket Updated: Reason - {cancellation_reason}, Details: {json.dumps(details)}"
     else:
         message = f"Unknown Event: {json.dumps(data)}"
-    '''
 
     channel.basic_publish(exchange='', routing_key='petzi', body=message)
     print(f" [x] Sent message to 'petzi' queue: {message}")
