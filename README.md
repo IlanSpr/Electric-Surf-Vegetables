@@ -11,6 +11,10 @@ This application integrates PostgreSQL for robust data storage, RabbitMQ for eff
 - **Scalable Architecture**: Using Flask, PostgreSQL, and RabbitMQ, the system is designed for high efficiency and scalability.
 - **Docker Containerization**: Ensures seamless deployment and consistency across different environments.
 
+## Architecture
+![case-class-diagram](https://github.com/IlanSpr/Electric-Surf-Vegetables/assets/107176981/6929e00b-b310-4a03-8870-e1b69454af26)
+
+
 ### Installation
 Clone the repository and set up the project:
 
